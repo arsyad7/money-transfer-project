@@ -121,6 +121,10 @@ func (s *MoneyTransferSvcImpl) PostTransaction(ctx context.Context, req PostTran
 		return err
 	}
 
+	if transaction.TransactionID == "" {
+		return fmt.Errorf("transaction not found")
+	}
+
 	if transaction.Status == "success" {
 		return fmt.Errorf("transaction already success")
 	}

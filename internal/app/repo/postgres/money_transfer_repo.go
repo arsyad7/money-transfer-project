@@ -90,6 +90,10 @@ func (r *MoneyTransferRepoImpl) UpdateUserBankBalance(ctx context.Context, userB
 func (r *MoneyTransferRepoImpl) GetTransactionByID(ctx context.Context, transactionID string) (transaction Transaction, err error) {
 	err = r.QueryRowContext(ctx, "SELECT user_bank_id, transaction_id, amount, status, transaction_type FROM money_transfer.transactions WHERE transaction_id = $1", transactionID).Scan(&transaction.UserBankID, &transaction.TransactionID, &transaction.Amount, &transaction.Status, &transaction.TransactionType)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return transaction, nil
+		}
+
 		return transaction, err
 	}
 

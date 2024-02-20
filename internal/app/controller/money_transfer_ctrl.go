@@ -11,6 +11,17 @@ import (
 )
 
 type (
+	ErrorResponse struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	SuccessResponse struct {
+		Status  int         `json:"status"`
+		Message string      `json:"message"`
+		Data    interface{} `json:"data,omitempty"`
+	}
+
 	MoneyTransferCtrl interface {
 		GetAccountValidation(ec echo.Context) (err error)
 		ProcessTransaction(ec echo.Context) (err error)
@@ -38,10 +49,17 @@ func (c *MoneyTransferCtrlImpl) GetAccountValidation(ec echo.Context) (err error
 
 	resp, err := c.MoneyTransferSvc.GetAccountValidation(ctx, request)
 	if err != nil {
-		return ec.JSON(http.StatusInternalServerError, err.Error())
+		return ec.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
 	}
 
-	return ec.JSON(http.StatusOK, resp)
+	return ec.JSON(http.StatusOK, SuccessResponse{
+		Status:  http.StatusOK,
+		Message: "success",
+		Data:    resp,
+	})
 }
 
 func (c *MoneyTransferCtrlImpl) ProcessTransaction(ec echo.Context) (err error) {
@@ -49,17 +67,27 @@ func (c *MoneyTransferCtrlImpl) ProcessTransaction(ec echo.Context) (err error) 
 
 	err = json.NewDecoder(ec.Request().Body).Decode(&request)
 	if err != nil {
-		return ec.JSON(http.StatusInternalServerError, err.Error())
+		return ec.JSON(http.StatusInternalServerError, ErrorResponse{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+		})
 	}
 
 	ctx := ec.Request().Context()
 
 	resp, err := c.MoneyTransferSvc.ProcessTransaction(ctx, request)
 	if err != nil {
-		return ec.JSON(http.StatusInternalServerError, err.Error())
+		return ec.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
 	}
 
-	return ec.JSON(http.StatusOK, resp)
+	return ec.JSON(http.StatusOK, SuccessResponse{
+		Status:  http.StatusOK,
+		Message: "success",
+		Data:    resp,
+	})
 }
 
 func (c *MoneyTransferCtrlImpl) PostTransaction(ec echo.Context) (err error) {
@@ -67,15 +95,24 @@ func (c *MoneyTransferCtrlImpl) PostTransaction(ec echo.Context) (err error) {
 
 	err = json.NewDecoder(ec.Request().Body).Decode(&request)
 	if err != nil {
-		return ec.JSON(http.StatusInternalServerError, err.Error())
+		return ec.JSON(http.StatusInternalServerError, ErrorResponse{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+		})
 	}
 
 	ctx := ec.Request().Context()
 
 	err = c.MoneyTransferSvc.PostTransaction(ctx, request)
 	if err != nil {
-		return ec.JSON(http.StatusInternalServerError, err.Error())
+		return ec.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
 	}
 
-	return ec.JSON(http.StatusOK, "Transaction has been posted")
+	return ec.JSON(http.StatusOK, SuccessResponse{
+		Status:  http.StatusOK,
+		Message: "success",
+	})
 }
