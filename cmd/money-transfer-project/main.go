@@ -6,6 +6,7 @@ import (
 	"money-transfer-project/internal/app/controller"
 	"money-transfer-project/internal/app/infra"
 	"money-transfer-project/internal/app/repo/postgres"
+	"money-transfer-project/internal/app/repo/rest"
 	"money-transfer-project/internal/app/service"
 	"money-transfer-project/pkg/di"
 
@@ -84,6 +85,11 @@ func LoadApplicationRepository() error {
 	err := di.Provide(postgres.NewMoneyTransferRepo)
 	if err != nil {
 		return fmt.Errorf("NewMoneyTransferRepo: %s", err.Error())
+	}
+
+	err = di.Provide(rest.NewMockAPIRepo)
+	if err != nil {
+		return fmt.Errorf("NewMockAPIRepo: %s", err.Error())
 	}
 
 	return nil
