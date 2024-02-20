@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"time"
 
+	_ "github.com/lib/pq"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/dig"
 )
@@ -59,5 +60,6 @@ func openPostgres(p *DatabaseCfg) *sql.DB {
 	if err = db.Ping(); err != nil {
 		log.Fatal().Err(err).Msg("postgres: ping")
 	}
+	fmt.Println("Connected to the database")
 	return db
 }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"money-transfer-project/internal/app/repo/rest"
 	"money-transfer-project/internal/app/service"
 	"net/http"
@@ -12,6 +13,8 @@ import (
 type (
 	MoneyTransferCtrl interface {
 		GetAccountValidation(ec echo.Context) (err error)
+		ProcessTransaction(ec echo.Context) (err error)
+		PostTransaction(ec echo.Context) (err error)
 	}
 
 	MoneyTransferCtrlImpl struct {
@@ -39,4 +42,40 @@ func (c *MoneyTransferCtrlImpl) GetAccountValidation(ec echo.Context) (err error
 	}
 
 	return ec.JSON(http.StatusOK, resp)
+}
+
+func (c *MoneyTransferCtrlImpl) ProcessTransaction(ec echo.Context) (err error) {
+	request := rest.TransferMoneyRequest{}
+
+	err = json.NewDecoder(ec.Request().Body).Decode(&request)
+	if err != nil {
+		return ec.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	ctx := ec.Request().Context()
+
+	resp, err := c.MoneyTransferSvc.ProcessTransaction(ctx, request)
+	if err != nil {
+		return ec.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return ec.JSON(http.StatusOK, resp)
+}
+
+func (c *MoneyTransferCtrlImpl) PostTransaction(ec echo.Context) (err error) {
+	request := service.PostTransactionRequest{}
+
+	err = json.NewDecoder(ec.Request().Body).Decode(&request)
+	if err != nil {
+		return ec.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	ctx := ec.Request().Context()
+
+	err = c.MoneyTransferSvc.PostTransaction(ctx, request)
+	if err != nil {
+		return ec.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return ec.JSON(http.StatusOK, "Transaction has been posted")
 }

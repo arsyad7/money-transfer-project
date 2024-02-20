@@ -16,4 +16,6 @@ func setRoute(
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 	e.GET("/account-validation", moneyTransferCtrl.GetAccountValidation)
+	e.POST("/process-transaction", moneyTransferCtrl.ProcessTransaction)
+	e.POST("/post-transaction", moneyTransferCtrl.PostTransaction)
 }

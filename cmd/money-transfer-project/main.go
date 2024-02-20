@@ -27,16 +27,19 @@ func main() {
 
 	err = LoadApplicationConfig()
 	if err != nil {
+		fmt.Println("LoadApplicationConfig: ", err.Error())
 		log.Fatal().Msg(err.Error())
 	}
 
 	err = LoadApplicationPackage()
 	if err != nil {
+		fmt.Println("LoadApplicationPackage: ", err.Error())
 		log.Fatal().Msg(err.Error())
 	}
 
 	err = LoadApplicationRepository()
 	if err != nil {
+		fmt.Println("LoadApplicationRepository: ", err.Error())
 		log.Fatal().Msg(err.Error())
 	}
 
@@ -75,6 +78,7 @@ func LoadApplicationPackage() error {
 
 	err = di.Provide(infra.NewDatabases)
 	if err != nil {
+		fmt.Println("NewDatabases: ", err.Error())
 		return fmt.Errorf("NewDatabases: %s", err.Error())
 	}
 
